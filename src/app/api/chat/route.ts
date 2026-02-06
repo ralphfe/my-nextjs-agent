@@ -4,10 +4,16 @@ import { createUIMessageStreamResponse } from 'ai';
 import { mastra } from '@/mastra';
 import { NextResponse } from 'next/server';
 
-const THREAD_ID = 'example-user-id';
-const RESOURCE_ID = 'weather-chat';
+const RESOURCE_ID = 'ai-chatbot';
 
 export async function POST(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const chatId = searchParams.get('chatId');
+
+    if (!chatId) {
+        return NextResponse.json({ error: 'chatId query parameter is required' }, { status: 400 });
+    }
+
     const params = await req.json();
     const stream = await handleChatStream({
         mastra,
@@ -16,7 +22,7 @@ export async function POST(req: Request) {
             ...params,
             memory: {
                 ...params.memory,
-                thread: THREAD_ID,
+                thread: chatId,
                 resource: RESOURCE_ID,
             }
         },
@@ -24,13 +30,20 @@ export async function POST(req: Request) {
     return createUIMessageStreamResponse({ stream });
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+    const chatId = searchParams.get('chatId');
+
+    if (!chatId) {
+        return NextResponse.json({ error: 'chatId query parameter is required' }, { status: 400 });
+    }
+
     const memory = await mastra.getAgentById('routing-agent').getMemory()
     let response = null
 
     try {
         response = await memory?.recall({
-            threadId: THREAD_ID,
+            threadId: chatId,
             resourceId: RESOURCE_ID,
         })
     } catch {

@@ -1,7 +1,7 @@
 'use client';
 
 import '@/app/globals.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { DefaultChatTransport, ToolUIPart } from 'ai';
 import { useChat } from '@ai-sdk/react';
 
@@ -30,21 +30,24 @@ import {
 
 function Chat() {
     const [input, setInput] = useState<string>('');
+    const [chatId] = useState<string>(() => crypto.randomUUID());
+
+    const transport = useMemo(() => new DefaultChatTransport({
+        api: `/api/chat?chatId=${chatId}`,
+    }), [chatId]);
 
     const { messages, setMessages, sendMessage, status } = useChat({
-        transport: new DefaultChatTransport({
-            api: '/api/chat',
-        }),
+        transport,
     });
 
     useEffect(() => {
         const fetchMessages = async () => {
-            const res = await fetch('/api/chat');
+            const res = await fetch(`/api/chat?chatId=${chatId}`);
             const data = await res.json();
             setMessages([...data]);
         };
         fetchMessages();
-    }, [setMessages]);
+    }, [setMessages, chatId]);
 
     const handleSubmit = async () => {
         if (!input.trim()) return;
