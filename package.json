@@ -16,6 +16,7 @@
     "@mastra/loggers": "^1.0.1",
     "@mastra/mcp": "^1.0.0",
     "@mastra/memory": "^1.1.0",
+    "@mastra/mongodb": "^1.2.0",
     "@mastra/observability": "^1.2.0",
     "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@rive-app/react-webgl2": "^4.26.2",
