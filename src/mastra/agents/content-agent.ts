@@ -1,5 +1,6 @@
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
+import { sanityMCPClient } from "@/mastra/mcp";
 
 export const contentAgent = new Agent({
   id: 'content-agent',
@@ -24,7 +25,6 @@ Guidelines:
 Use the Sanity MCP tools to fetch content from the CMS.
 `,
   model: 'anthropic/claude-sonnet-4-5',
-  // MCP tools will be connected via the MCP server configuration
-  tools: {},
+  tools: await sanityMCPClient.listTools(),
   memory: new Memory(),
 });

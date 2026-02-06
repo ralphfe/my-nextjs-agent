@@ -1,5 +1,6 @@
 import { Agent } from '@mastra/core/agent';
 import { Memory } from '@mastra/memory';
+import { algoliaMCPClient } from "@/mastra/mcp";
 
 export const productAgent = new Agent({
   id: 'product-agent',
@@ -24,7 +25,6 @@ Guidelines:
 Use the Algolia MCP tools to fetch product data from the catalog.
 `,
   model: 'anthropic/claude-sonnet-4-5',
-  // MCP tools will be connected via the MCP server configuration
-  tools: {},
+  tools: await algoliaMCPClient.listTools(),
   memory: new Memory(),
 });
